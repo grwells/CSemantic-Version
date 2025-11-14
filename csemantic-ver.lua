@@ -155,6 +155,15 @@ parser
     :action(function() print(get_gversion()) end)
 
 parser
+    :flag("--print-plain")
+    :description("print current version")
+    :action(
+        function() 
+            print(string.format("%u %02u %03u", vM, vm, vp) )
+            os.exit() 
+        end)
+
+parser
     :flag("-s --save")
     :description("save current version to metadata.json")
     :action(
@@ -188,8 +197,10 @@ parser
 -- default: attempt to load version from file
 get_version()
 local args = parser:parse()
+--[[
 if json_saved then 
     print ("[EXIT] json saved to file")
 else
     print("[EXIT] json not saved")
 end
+--]]
