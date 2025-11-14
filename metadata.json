@@ -1,7 +1,8 @@
 {
+  "name":["Lancelot"],
   "version":{
-    "minor":2,
-    "patch":3,
-    "major":3
+    "minor":0,
+    "patch":0,
+    "major":1
   }
 }

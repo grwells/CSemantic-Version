@@ -8,21 +8,18 @@ This is a project to facilitate automatic generation of a version control header
 
 >[!example]
 >```bash
->$lua csemantic-ver.lua -M --print -s                                                                
->
->version: v2.02.003
->[DEBUG] start   version: v2.02.003
->[DEBUG] executing args
->version: v3.02.003
+>$ lua csemantic-ver.lua -M -s
 >json:   {
+>  "name":["Lancelot"],
 >  "version":{
->    "minor":2,
->    "patch":3,
->    "major":3
+>    "minor":0,
+>    "patch":0,
+>    "major":1
 >  }
 >}
 >[EXIT] json saved to file
->```
+
+![help example output](docs/images/csemantic-ver.png)
 
 # Dependencies
 

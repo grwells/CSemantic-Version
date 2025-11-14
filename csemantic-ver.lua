@@ -187,10 +187,7 @@ parser
 
 -- default: attempt to load version from file
 get_version()
-print("[DEBUG] start", get_gversion())
-print("[DEBUG] executing args")
 local args = parser:parse()
-
 if json_saved then 
     print ("[EXIT] json saved to file")
 else
