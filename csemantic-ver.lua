@@ -108,6 +108,12 @@ local function save_meta(jsonobj)
     end
 end
 
+local function set_meta(M, m, p)
+    json_meta.version.patch = p
+    json_meta.version.minor = m
+    json_meta.version.major = M
+end
+
 local function write_to_cheader(jsonobj)
     local fn = "version.h"
     local file = io.open(fn, "w")
@@ -133,6 +139,19 @@ local function write_to_cheader(jsonobj)
         print("error opening ", fn)
     end
 end
+
+parser
+    :option("-o --overwrite")
+    :args("3")
+    :description("set all version segments at the same time (WARNING: destructive)")
+    :action(
+        function(_, _, args, flag)
+            vM = args[1]
+            vm = args[2]
+            vp = args[3]
+            set_meta(vM, vm, vp)
+        end
+    )
 
 parser
     :flag("-p --patch")
@@ -169,9 +188,7 @@ parser
     :action(
         function()
             if json_meta then
-                json_meta.version.patch = vp
-                json_meta.version.minor = vm
-                json_meta.version.major = vM
+                set_meta(vM, vm, vp)
                 save_meta(json_meta)
                 json_saved = true
             else
