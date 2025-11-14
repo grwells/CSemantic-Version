@@ -8,12 +8,22 @@ local argparse = require("argparse")
 -- after API
 local parser = argparse():name("semantic version"):add_complete():description(
 [[
-███████╗███████╗███╗   ███╗ █████╗ ███╗   ██╗████████╗██╗ ██████╗    ██╗   ██╗███████╗██████╗ 
-██╔════╝██╔════╝████╗ ████║██╔══██╗████╗  ██║╚══██╔══╝██║██╔════╝    ██║   ██║██╔════╝██╔══██╗
-███████╗█████╗  ██╔████╔██║███████║██╔██╗ ██║   ██║   ██║██║         ██║   ██║█████╗  ██████╔╝
-╚════██║██╔══╝  ██║╚██╔╝██║██╔══██║██║╚██╗██║   ██║   ██║██║         ╚██╗ ██╔╝██╔══╝  ██╔══██╗
-███████║███████╗██║ ╚═╝ ██║██║  ██║██║ ╚████║   ██║   ██║╚██████╗     ╚████╔╝ ███████╗██║  ██║
-╚══════╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝ ╚═════╝      ╚═══╝  ╚══════╝╚═╝  ╚═╝
+ ██████╗              ███████╗███████╗███╗   ███╗ █████╗ ███╗   ██╗████████╗██╗ ██████╗    
+██╔════╝              ██╔════╝██╔════╝████╗ ████║██╔══██╗████╗  ██║╚══██╔══╝██║██╔════╝    
+██║         █████╗    ███████╗█████╗  ██╔████╔██║███████║██╔██╗ ██║   ██║   ██║██║         
+██║         ╚════╝    ╚════██║██╔══╝  ██║╚██╔╝██║██╔══██║██║╚██╗██║   ██║   ██║██║         
+╚██████╗              ███████║███████╗██║ ╚═╝ ██║██║  ██║██║ ╚████║   ██║   ██║╚██████╗    
+ ╚═════╝              ╚══════╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚═╝ ╚═════╝    
+                                                                                           
+██╗   ██╗███████╗██████╗ ███████╗██╗ ██████╗ ███╗   ██╗                                    
+██║   ██║██╔════╝██╔══██╗██╔════╝██║██╔═══██╗████╗  ██║                                    
+██║   ██║█████╗  ██████╔╝███████╗██║██║   ██║██╔██╗ ██║                                    
+╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║██║██║   ██║██║╚██╗██║                                    
+ ╚████╔╝ ███████╗██║  ██║███████║██║╚██████╔╝██║ ╚████║                                    
+  ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝                                    
+
+  Garrett Wells
+  Nov. 2025
 ]]
 )
 
@@ -25,7 +35,7 @@ local json_meta = nil
 local json_saved = false
 
 local function get_gversion()
-    return string.format('version: v%u.%02u.%03u', vM, vm, vp)
+    return string.format('v%u.%02u.%03u', vM, vm, vp)
 end
 
 -- returns true if file exists
@@ -57,8 +67,7 @@ local function get_version()
         vM = obj.version.major
         vm = obj.version.minor
         vp = obj.version.patch
-        print (get_gversion())
-        return ver
+        return obj.version
     end
 end
 
@@ -97,7 +106,32 @@ local function save_meta(jsonobj)
     else
         print("error opening metadata.json")
     end
+end
 
+local function write_to_cheader(jsonobj)
+    local fn = "version.h"
+    local file = io.open(fn, "w")
+    local str_content = 
+[[
+#ifndef VERSION_H
+#define VERSION_H
+/**
+ * @file version.h
+ * @brief Auto generated semantic version strings for tracking SW version.
+ */
+
+#define VER_M %u
+#define VER_m %02u
+#define VER_p %03u
+
+#endif]]
+    local str_final = string.format(str_content, vM, vm, vp)
+    if file then 
+        file:write(str_final)
+        file:close()
+    else
+        print("error opening ", fn)
+    end
 end
 
 parser
@@ -132,7 +166,21 @@ parser
                 save_meta(json_meta)
                 json_saved = true
             else
-                print("error json_meta is nil")
+                print("[ERROR] json_meta is nil")
+            end
+        end
+    )
+
+parser
+    :flag("-w --write")
+    :description("write semantic version to C header file")
+    :action(
+        function()
+            if json_meta then
+                write_to_cheader(json_meta)
+                print("[DEBUG] C header generated")
+            else
+                print("[ERROR] json_meta is nil")
             end
         end
     )
