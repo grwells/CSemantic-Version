@@ -19,7 +19,7 @@ This is a project to facilitate automatic generation of a version control header
 >}
 >[EXIT] json saved to file
 
-![help example output](docs/images/csemantic-ver.png)
+![help example output](docs/images/csemantic_help.png)
 
 # Dependencies
 
